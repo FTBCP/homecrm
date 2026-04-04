@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+/* ============================================
+   HomeBase Design Tokens
+   Source of truth: brand.md
+   ============================================ */
+
+@theme {
+  /* --- Colors --- */
+  --color-primary: #1A1A1A;
+  --color-background: #F7F6F3;
+  --color-surface: #FFFFFF;
+  --color-border: #E8E6E1;
+  --color-muted: #8C8C8C;
+  --color-accent: #0D9488;
+  --color-danger: #DC2626;
+  --color-warning: #D97706;
+  --color-success: #16A34A;
+
+  /* Category badge backgrounds */
+  --color-cat-hvac-bg: #FFF3E0;
+  --color-cat-hvac-text: #E65100;
+  --color-cat-plumbing-bg: #E3F2FD;
+  --color-cat-plumbing-text: #0D47A1;
+  --color-cat-electrical-bg: #FFF9C4;
+  --color-cat-electrical-text: #F57F17;
+  --color-cat-roofing-bg: #F3E5F5;
+  --color-cat-roofing-text: #6A1B9A;
+  --color-cat-appliance-bg: #E8F5E9;
+  --color-cat-appliance-text: #1B5E20;
+  --color-cat-exterior-bg: #EFEBE9;
+  --color-cat-exterior-text: #4E342E;
+  --color-cat-safety-bg: #FCE4EC;
+  --color-cat-safety-text: #880E4F;
+  --color-cat-landscaping-bg: #E0F2F1;
+  --color-cat-landscaping-text: #004D40;
+  --color-cat-pest-bg: #FBE9E7;
+  --color-cat-pest-text: #BF360C;
+  --color-cat-general-bg: #F5F5F5;
+  --color-cat-general-text: #424242;
+
+  /* --- Typography --- */
+  --font-display: 'Fraunces', serif;
+  --font-sans: 'DM Sans', sans-serif;
+
+  /* --- Spacing --- */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  /* --- Border Radius --- */
+  --radius-card: 16px;
+  --radius-button: 10px;
+  --radius-input: 10px;
+  --radius-badge: 100px;
+  --radius-modal: 20px;
+  --radius-tab: 100px;
+}
+
+/* ============================================
+   Base Styles
+   ============================================ */
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-background);
+  color: var(--color-primary);
+  line-height: 1.5;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* brand.md rule: never use font sizes below 11px */

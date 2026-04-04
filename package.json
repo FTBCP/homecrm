@@ -1,0 +1,41 @@
+{
+  "name": "homecrm",
+  "version": "1.0.0",
+  "private": true,
+  "description": "HomeBase — Your home's command center",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:run": "vitest run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FTBCP/homecrm.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/FTBCP/homecrm/issues"
+  },
+  "homepage": "https://github.com/FTBCP/homecrm#readme",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.101.1",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.2.2",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@vitejs/plugin-react": "^6.0.1",
+    "jsdom": "^29.0.1",
+    "tailwindcss": "^4.2.2",
+    "vite": "^8.0.3",
+    "vitest": "^4.1.2"
+  }
+}
