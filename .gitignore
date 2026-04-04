@@ -1,4 +1,21 @@
-node_modules/ 
-.env 
-dist/ 
-.DS_Store 
+# Installed packages — large folder, not your code
+node_modules/
+dist/
+build/
+.next/
+out/
+
+# Your secret keys — these NEVER go to GitHub
+.env
+.env.local
+.env.*.local
+
+# Mac system file
+.DS_Store
+
+# Log files
+*.log
+
+# AI tool caches
+.antigravity/cache
+.cursor/
