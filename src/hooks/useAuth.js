@@ -33,7 +33,7 @@ export function useAuth() {
     // First login — auto-create a home
     const { data: newHome, error: createError } = await supabase
       .from('homes')
-      .insert({ user_id: userId, name: 'My Home' })
+      .insert({ user_id: userId })
       .select('id');
 
     if (createError) {
@@ -49,10 +49,10 @@ export function useAuth() {
   // Listen for auth state changes
   useEffect(() => {
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session?.user) {
         setUser(session.user);
-        loadHome(session.user.id);
+        await loadHome(session.user.id);
       }
       setLoading(false);
     });

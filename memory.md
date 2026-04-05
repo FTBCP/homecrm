@@ -7,10 +7,10 @@
 ## Project Status
 
 **Phase:** 1 (MVP)
-**State:** Sections 0–3 complete — all 3 tabs functional, committed to main
+**State:** Sections 0–4 complete — all 3 tabs, auth, RLS — committed to main
 **Deployed:** No (local only at http://localhost:5173/)
-**Database:** Supabase project created, 3 tables live, RLS temporarily disabled for dev
-**Last Commit:** `1f86e59` — feat(mvp): add service history, provider rolodex, and upcoming tabs
+**Database:** Supabase project created, 3 tables live, RLS enabled with auth-based policies
+**Last Commit:** `a5f49cb` — feat(auth): add Supabase email/password auth with RLS policies
 
 What exists today:
 
@@ -33,8 +33,12 @@ What exists today:
 - [x] Intervals config (src/lib/intervals.js)
 - [x] Provider Rolodex tab — searchable grid, edit modal, star ratings, job counts
 - [x] Upcoming tab — sorted by urgency, overdue/due-soon badges, Log Again flow
-- [ ] Auth (email/password login)
-- [ ] Deployed to Vercel
+- [x] Auth (email/password login + signup, session management)
+- [x] RLS policies restored (users see only their own data)
+- [x] Auto-create home on first signup
+- [x] Sign Out button in header
+- [x] CSS polish: animations, stagger, modal blur, centered container
+- [ ] Deployed (considering Railway vs Vercel)
 
 ## Last Session
 
@@ -42,15 +46,20 @@ What exists today:
 
 **What happened:**
 
-- Ran brainstorming skill to validate Phase 1 plan
-- Identified 5 gaps: missing home_id seed, shadcn/ui mismatch, provider auto-creation complexity, no router needed, testing setup timing
-- Decided to drop shadcn/ui (brand.md still references it — needs updating)
-- Decided no React Router needed — using state-based tab switching
-- Created full Phase 1 analysis with resequenced build order (see phase1_analysis.md artifact)
-- Completed Section 0 (Foundation): Vite, Tailwind, Vitest, Supabase client, app shell
-- Completed Section 1 (Service History): Log Service modal, history list, stat cards, provider auto-create
-- All data flows end-to-end: form → Supabase → UI refresh
-- Test home seeded with ID: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+- Added Supabase email/password auth (useAuth hook, AuthPage component)
+- Auth gate in App.jsx — shows login when logged out, main app when logged in
+- Auto-creates a `homes` row on first signup (no address required)
+- Switched hooks from DEV_HOME_ID to real homeId/userId from auth
+- Re-enabled RLS with proper auth-based policies on all 3 tables
+- Cleaned up old dev data (fake user_id rows)
+- Added CSS polish pass: fade-in, slide-up, stagger animations, centered container, modal blur
+- Added Sign Out button to header
+- All 6 tests passing (updated to mock Supabase auth)
+- Fixed race condition: `loadHome` wasn't awaited, causing `homeId = null` on page load
+- Fixed `homes` insert: removed non-existent `name` column from auto-create
+- Fixed loading guards in hooks: `setLoading(false)` when homeId/userId is null
+- Locked roadmap phases: Phase 1 (MVP), Phase 2 (QoL), Phase 3+ (big ideas)
+- Old test data deleted — users start fresh after auth migration
 
 ## Decisions Made
 
@@ -75,19 +84,18 @@ What exists today:
 | Problem | Status | Notes |
 |---------|--------|-------|
 | brand.md still references shadcn/ui on line ~189 | Open | Need to update to say "plain Tailwind" |
-| RLS disabled on all 3 tables for dev | Open | Must re-enable + create proper policies when adding auth in Section 4 |
-| homes.user_id FK constraint dropped for dev | Open | Must restore when adding auth in Section 4 |
-| providers.user_id FK constraint dropped for dev | Open | Must restore when adding auth in Section 4 |
-| homes.user_id is nullable (was NOT NULL) | Open | Must restore NOT NULL when adding auth in Section 4 |
-| providers.user_id is nullable (was NOT NULL) | Open | Must restore NOT NULL when adding auth in Section 4 |
+| RLS disabled on all 3 tables for dev | ✅ Fixed | RLS re-enabled with auth-based policies |
+| homes.address is now nullable | Open | Fine for MVP, consider requiring on profile page later |
+| DEV_HOME_ID constant still in repo | Open | Remove src/lib/constants.js in cleanup pass |
+| Old test@homebase.dev account may have broken home state | Open | Sign up fresh account to test; old account had home creation fail before bugfix |
 
 ## Next Action
 
 The immediate next steps, in order:
 
-1. **Polish & Ship (Section 4)** — mobile layout pass, loading/error polish, auth (Supabase Auth), deploy to Vercel
-2. **Re-enable RLS** — restore FK constraints, NOT NULL on user_id, create proper auth-based policies
-3. **Update brand.md** — remove shadcn/ui references, document actual component patterns
+1. **Deploy** — configure for Railway (or Vercel), set env vars, first production deploy
+2. **Cleanup** — remove DEV_HOME_ID constant, update brand.md, update db-schema.md
+3. **Phase 2 planning** — if Phase 1 deployed and working
 
 ## Gotchas
 
@@ -115,19 +123,24 @@ homecrm/
 │   └── migration.sql             # Full table creation + RLS SQL
 ├── src/
 │   ├── main.jsx                  # React entry point
-│   ├── index.css                 # Tailwind + brand design tokens
-│   ├── App.jsx                   # Main app: header, stats, tabs, modal
-│   ├── App.test.jsx              # 4 tests: render, stats, tabs
+│   ├── index.css                 # Tailwind + brand design tokens + animations
+│   ├── App.jsx                   # Auth gate + MainApp: header, stats, tabs, modals
+│   ├── App.test.jsx              # 6 tests: render, stats, tabs, auth
 │   ├── lib/
 │   │   ├── supabase.js           # Single Supabase client
 │   │   ├── intervals.js          # Category → months mapping + calculator
-│   │   └── constants.js          # DEV_HOME_ID (temp, removed in Section 4)
+│   │   └── constants.js          # DEV_HOME_ID (legacy, no longer used)
 │   ├── hooks/
-│   │   ├── useServiceRecords.js  # Fetch/add service records
-│   │   └── useProviders.js       # Fetch/add/update/find-or-create providers
+│   │   ├── useAuth.js            # Session mgmt: login, signup, logout, auto-create home
+│   │   ├── useServiceRecords.js  # Fetch/add service records (takes homeId)
+│   │   └── useProviders.js       # Fetch/add/update providers (takes userId)
 │   ├── components/
+│   │   ├── AuthPage.jsx          # Login/signup form
 │   │   ├── LogServiceModal.jsx   # Log service form (6 fields max)
+│   │   ├── EditProviderModal.jsx # Edit provider details modal
 │   │   ├── ServiceHistory.jsx    # History list with ServiceRow
+│   │   ├── UpcomingList.jsx      # Upcoming maintenance with urgency badges
+│   │   ├── ProviderList.jsx      # Provider rolodex grid with search
 │   │   ├── CategoryBadge.jsx     # Color-coded category pills
 │   │   └── StatCard.jsx          # Stat display card
 │   └── test/

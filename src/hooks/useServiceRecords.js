@@ -12,7 +12,7 @@ export function useServiceRecords(homeId) {
   const [error, setError] = useState(null);
 
   const fetchRecords = useCallback(async () => {
-    if (!homeId) return;
+    if (!homeId) { setLoading(false); return; }
     setLoading(true);
     setError(null);
     try {

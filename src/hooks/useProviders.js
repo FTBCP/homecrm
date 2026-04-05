@@ -12,7 +12,7 @@ export function useProviders(userId) {
   const [error, setError] = useState(null);
 
   const fetchProviders = useCallback(async () => {
-    if (!userId) return;
+    if (!userId) { setLoading(false); return; }
     setLoading(true);
     setError(null);
     try {
