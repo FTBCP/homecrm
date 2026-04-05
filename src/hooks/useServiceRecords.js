@@ -52,7 +52,25 @@ export function useServiceRecords(homeId) {
     }
   };
 
-  return { records, loading, error, refresh: fetchRecords, addRecord };
+  const updateRecord = async (id, updates) => {
+    try {
+      const { data, error: updateError } = await supabase
+        .from('service_records')
+        .update(updates)
+        .eq('id', id)
+        .eq('home_id', homeId)
+        .select('*, providers(name, company)');
+
+      if (updateError) throw updateError;
+      await fetchRecords();
+      return { success: true };
+    } catch (err) {
+      console.error('Failed to update service record:', err.message);
+      return { success: false, error: 'Something went wrong. Please try again.' };
+    }
+  };
+
+  return { records, loading, error, refresh: fetchRecords, addRecord, updateRecord };
 }
 
 /**

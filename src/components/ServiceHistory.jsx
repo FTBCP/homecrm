@@ -4,7 +4,7 @@ import CategoryBadge from './CategoryBadge';
  * Displays the service history as a list of rows.
  * Each row shows: date, category badge, description, provider, cost.
  */
-export default function ServiceHistory({ records, loading, error }) {
+export default function ServiceHistory({ records, loading, error, onEdit }) {
   if (loading) {
     return (
       <div className="flex justify-center py-xl">
@@ -37,13 +37,13 @@ export default function ServiceHistory({ records, loading, error }) {
   return (
     <div className="flex flex-col gap-sm animate-stagger">
       {records.map((record) => (
-        <ServiceRow key={record.id} record={record} />
+        <ServiceRow key={record.id} record={record} onEdit={onEdit} />
       ))}
     </div>
   );
 }
 
-function ServiceRow({ record }) {
+function ServiceRow({ record, onEdit }) {
   const formattedDate = new Date(record.date).toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
@@ -58,9 +58,10 @@ function ServiceRow({ record }) {
   const providerName = record.providers?.name || null;
 
   return (
-    <div
-      className="rounded-[16px] p-md flex items-start gap-md
-        transition-shadow duration-200 hover:shadow-sm"
+    <button
+      onClick={() => onEdit(record)}
+      className="text-left w-full rounded-[16px] p-md flex items-start gap-md
+        transition-shadow duration-200 hover:shadow-sm cursor-pointer"
       style={{
         backgroundColor: 'var(--color-surface)',
         border: '1px solid var(--color-border)',
@@ -91,6 +92,6 @@ function ServiceRow({ record }) {
       >
         {formattedCost}
       </p>
-    </div>
+    </button>
   );
 }

@@ -49,29 +49,38 @@ export function useAuth() {
   // Listen for auth state changes
   useEffect(() => {
     // Get initial session
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
         setUser(session.user);
-        await loadHome(session.user.id);
+      } else {
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     // Subscribe to changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
+      (_event, session) => {
         if (session?.user) {
           setUser(session.user);
-          await loadHome(session.user.id);
         } else {
           setUser(null);
           setHomeId(null);
+          setLoading(false);
         }
       }
     );
 
     return () => subscription.unsubscribe();
-  }, [loadHome]);
+  }, []);
+
+  // Separate effect to load home when user changes
+  useEffect(() => {
+    if (user && !homeId) {
+      loadHome(user.id).finally(() => {
+        setLoading(false);
+      });
+    }
+  }, [user, homeId, loadHome]);
 
   const signUp = async (email, password) => {
     const { data, error } = await supabase.auth.signUp({ email, password });

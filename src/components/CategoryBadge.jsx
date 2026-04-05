@@ -2,7 +2,7 @@
  * Category badge colors — matches brand.md exactly.
  * Each category gets a consistent background + text color pair.
  */
-const BADGE_COLORS = {
+export const BADGE_COLORS = {
   HVAC:           { bg: '#FFF3E0', text: '#E65100' },
   Plumbing:       { bg: '#E3F2FD', text: '#0D47A1' },
   Electrical:     { bg: '#FFF9C4', text: '#F57F17' },

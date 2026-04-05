@@ -186,11 +186,11 @@ All buttons: `padding: 12px 28px`, `font-weight: 600`, `font-size: 14px`. Hover 
 
 
 
-\## Components (shadcn/ui + Tailwind)
+\## Components (Tailwind CSS)
 
 
 
-\- Use shadcn/ui components as the base, then override with the colors and radius values above.
+\- Build components with standard HTML/React and style them exclusively with Tailwind CSS using the colors radius values above.
 
 \- Cards: white background, 1px stone border, 16px radius, subtle hover shadow (`shadow-sm` on hover).
 

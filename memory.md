@@ -85,17 +85,15 @@ What exists today:
 |---------|--------|-------|
 | brand.md still references shadcn/ui on line ~189 | Open | Need to update to say "plain Tailwind" |
 | RLS disabled on all 3 tables for dev | ✅ Fixed | RLS re-enabled with auth-based policies |
-| homes.address is now nullable | Open | Fine for MVP, consider requiring on profile page later |
-| DEV_HOME_ID constant still in repo | Open | Remove src/lib/constants.js in cleanup pass |
+| homes.address is now nullable | ✅ Fixed | Updated db-schema.md to reflect this |
+| DEV_HOME_ID constant still in repo | ✅ Fixed | Removed src/lib/constants.js |
 | Old test@homebase.dev account may have broken home state | Open | Sign up fresh account to test; old account had home creation fail before bugfix |
 
 ## Next Action
 
 The immediate next steps, in order:
 
-1. **Deploy** — configure for Railway (or Vercel), set env vars, first production deploy
-2. **Cleanup** — remove DEV_HOME_ID constant, update brand.md, update db-schema.md
-3. **Phase 2 planning** — if Phase 1 deployed and working
+1. **Phase 2 planning** — Kick off Phase 2 Quality of Life features by picking the next task.
 
 ## Gotchas
 

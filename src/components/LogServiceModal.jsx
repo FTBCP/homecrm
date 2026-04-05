@@ -6,14 +6,14 @@ import { getNextRecommendedDate } from '../lib/intervals';
  * Modal form for logging a new service.
  * Max 6 fields per brand.md rule: category, description, cost, date, provider name, notes.
  */
-export default function LogServiceModal({ onClose, onSave, providers, prefill }) {
+export default function LogServiceModal({ onClose, onSave, providers, prefill, editRecord }) {
   const [form, setForm] = useState({
-    category: prefill?.category || '',
-    description: prefill?.description || '',
-    cost: '',
-    date: new Date().toISOString().split('T')[0],
-    providerName: prefill?.providerName || '',
-    notes: '',
+    category: editRecord?.category || prefill?.category || '',
+    description: editRecord?.description || prefill?.description || '',
+    cost: editRecord?.cost !== undefined ? String(editRecord.cost) : '',
+    date: editRecord?.date || new Date().toISOString().split('T')[0],
+    providerName: editRecord?.providers?.name || prefill?.providerName || '',
+    notes: editRecord?.notes || '',
   });
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
@@ -85,7 +85,7 @@ export default function LogServiceModal({ onClose, onSave, providers, prefill })
         {/* Header */}
         <div className="flex items-center justify-between mb-lg">
           <h2 className="text-[18px] font-semibold" style={{ fontFamily: 'var(--font-sans)' }}>
-            Log a Service
+            {editRecord ? 'Edit Service' : 'Log a Service'}
           </h2>
           <button
             onClick={onClose}

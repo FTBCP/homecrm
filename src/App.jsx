@@ -6,11 +6,11 @@ import AuthPage from './components/AuthPage';
 import StatCard from './components/StatCard';
 import ServiceHistory from './components/ServiceHistory';
 import ProviderList from './components/ProviderList';
-import UpcomingList from './components/UpcomingList';
+import Dashboard from './components/Dashboard';
 import LogServiceModal from './components/LogServiceModal';
 import EditProviderModal from './components/EditProviderModal';
 
-const TABS = ['History', 'Upcoming', 'Providers'];
+const TABS = ['Dashboard', 'History', 'Providers'];
 
 function App() {
   const auth = useAuth();
@@ -37,13 +37,14 @@ function App() {
 }
 
 function MainApp({ auth }) {
-  const [activeTab, setActiveTab] = useState('History');
+  const [activeTab, setActiveTab] = useState('Dashboard');
   const [showLogModal, setShowLogModal] = useState(false);
   const [editingProvider, setEditingProvider] = useState(null);
   const [prefillData, setPrefillData] = useState(null);
+  const [editingServiceRecord, setEditingServiceRecord] = useState(null);
 
   // Data hooks — homeId for service records, userId for providers
-  const { records, loading, error, refresh, addRecord } = useServiceRecords(auth.homeId);
+  const { records, loading, error, refresh, addRecord, updateRecord } = useServiceRecords(auth.homeId);
   const {
     providers, loading: providersLoading, error: providersError,
     refresh: refreshProviders, findOrCreateProvider, updateProvider,
@@ -71,7 +72,7 @@ function MainApp({ auth }) {
       providerId = await findOrCreateProvider(formData.providerName, formData.category);
     }
 
-    const result = await addRecord({
+    const payload = {
       category: formData.category,
       description: formData.description,
       cost: formData.cost,
@@ -79,7 +80,11 @@ function MainApp({ auth }) {
       provider_id: providerId,
       notes: formData.notes,
       next_recommended_date: formData.next_recommended_date,
-    });
+    };
+
+    const result = editingServiceRecord
+      ? await updateRecord(editingServiceRecord.id, payload)
+      : await addRecord(payload);
 
     if (result.success) refreshProviders();
     return result;
@@ -91,6 +96,17 @@ function MainApp({ auth }) {
       description: record.description,
       providerName: record.providers?.name || '',
     });
+    setShowLogModal(true);
+  };
+
+  const handleLogSample = (sampleData) => {
+    setPrefillData(sampleData);
+    setEditingServiceRecord(null);
+    setShowLogModal(true);
+  };
+
+  const handleEditService = (record) => {
+    setEditingServiceRecord(record);
     setShowLogModal(true);
   };
 
@@ -156,11 +172,14 @@ function MainApp({ auth }) {
         {/* Tab Content */}
         <main className="px-md pt-lg pb-[100px]" key={activeTab}>
           <div className="animate-fade-in">
-            {activeTab === 'History' && (
-              <ServiceHistory records={records} loading={loading} error={error} />
+            {activeTab === 'Dashboard' && (
+              <Dashboard 
+                records={records} loading={loading} error={error} 
+                onMarkDone={handleLogAgain} onLogSample={handleLogSample} 
+              />
             )}
-            {activeTab === 'Upcoming' && (
-              <UpcomingList records={records} loading={loading} error={error} onMarkDone={handleLogAgain} />
+            {activeTab === 'History' && (
+              <ServiceHistory records={records} loading={loading} error={error} onEdit={handleEditService} />
             )}
             {activeTab === 'Providers' && (
               <ProviderList
@@ -175,7 +194,7 @@ function MainApp({ auth }) {
       {/* FAB */}
       <button
         id="btn-log-service"
-        onClick={() => { setPrefillData(null); setShowLogModal(true); }}
+        onClick={() => { setPrefillData(null); setEditingServiceRecord(null); setShowLogModal(true); }}
         className="fixed bottom-xl right-md w-[56px] h-[56px] rounded-full
           flex items-center justify-center text-2xl font-bold
           shadow-lg hover:shadow-xl transition-all duration-200 cursor-pointer btn-fab"
@@ -188,8 +207,8 @@ function MainApp({ auth }) {
       {/* Modals */}
       {showLogModal && (
         <LogServiceModal
-          onClose={() => { setShowLogModal(false); setPrefillData(null); }}
-          onSave={handleSaveService} providers={providers} prefill={prefillData}
+          onClose={() => { setShowLogModal(false); setPrefillData(null); setEditingServiceRecord(null); }}
+          onSave={handleSaveService} providers={providers} prefill={prefillData} editRecord={editingServiceRecord}
         />
       )}
       {editingProvider && (

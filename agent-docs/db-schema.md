@@ -52,7 +52,7 @@ Stores the single property being tracked in Phase 1.
 
 | user\_id | uuid | no | `auth.uid()` | FK → Supabase auth.users. Owner of this home. |
 
-| address | text | no | — | Street address |
+| address | text | yes | — | Street address (auto-creation skips this initially) |
 
 | year\_built | integer | yes | — | Four-digit year |
 

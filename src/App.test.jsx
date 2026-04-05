@@ -68,10 +68,10 @@ describe('App', () => {
     });
   });
 
-  it('shows History tab by default with empty state', async () => {
+  it('shows Dashboard tab by default with onboarding wizard', async () => {
     render(<App />);
     await waitFor(() => {
-      expect(screen.getByText(/no services logged yet/i)).toBeInTheDocument();
+      expect(screen.getByText(/Welcome to HomeBase!/i)).toBeInTheDocument();
     });
   });
 
@@ -85,13 +85,13 @@ describe('App', () => {
     });
   });
 
-  it('switches to Upcoming tab', async () => {
+  it('switches to History tab', async () => {
     const user = userEvent.setup();
     render(<App />);
-    await waitFor(() => screen.getByText('Upcoming'));
-    await user.click(screen.getByText('Upcoming'));
+    await waitFor(() => screen.getByText('History'));
+    await user.click(screen.getByText('History'));
     await waitFor(() => {
-      expect(screen.getByText(/no upcoming maintenance yet/i)).toBeInTheDocument();
+      expect(screen.getByText(/no services logged yet/i)).toBeInTheDocument();
     });
   });
 });

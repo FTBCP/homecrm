@@ -63,35 +63,35 @@
 - [x] CSS polish — animations (fade-in, slide-up, stagger), centered container, modal blur
 - [x] 6 tests passing (render, stats, tabs, auth mocking)
 - [x] Deploy to production (Railway or Vercel), confirm everything works at live URL: https://homecrm.vercel.app/
-- [ ] Cleanup: remove DEV_HOME_ID constant, update brand.md
+- [x] Cleanup: remove DEV_HOME_ID constant, update brand.md
 
 ---
 
-## Phase 2 — Quality of Life (NOT building yet)
+## Phase 2 — Quality of Life & Onboarding
 
-> These features improve the daily experience but aren't needed for a working MVP. Do not start any of these until Phase 1 deploy is complete and confirmed working.
+> The user's requested refined set of Phase 2 features. Pick one using `/new-feature`.
 
-**To kick off Phase 2:** Say "Let's start Phase 2. Run /new-feature to pick the next task."
+- [ ] Improved Dashboard (show upcoming tasks right away instead of having to switch tabs)
+- [ ] Intuitive Onboarding (wizard to pre-fill common maintenance tasks like air filters, winterizing, or add sample jobs)
+- [ ] Dashboard charts (spending by category over time)
+- [ ] Provider notes and review history (track past experiences)
+- [ ] Social login (Google, Apple)
+
+---
+
+## Phase 3+ — Backlog & Big Ideas
+
+> Captured for future brainstorming.
 
 - [ ] Multi-property support (track more than one home)
 - [ ] Photo attachments on service records (before/after pics, receipts)
 - [ ] CSV export of service history
 - [ ] Dark mode
-- [ ] Dashboard charts (spending by category over time)
-- [ ] Provider notes and review history (track past experiences)
 - [ ] Push notifications for upcoming maintenance (browser notifications)
 - [ ] Recurring auto-scheduled reminders (email or SMS via Supabase Edge Functions)
 - [ ] Household sharing (multiple users per home)
-
----
-
-## Phase 3+ — Big Ideas (capture only, no planning yet)
-
-> These are larger features that would require significant architecture changes or third-party integrations. Captured for future brainstorming.
-
 - [ ] Provider marketplace or booking integration
 - [ ] Payment processing or invoice management
-- [ ] Social login (Google, Apple)
 - [ ] AI-powered recommendations based on home age, location, climate
 - [ ] Mobile app (React Native or PWA)
 - [ ] Integration with home warranty providers
