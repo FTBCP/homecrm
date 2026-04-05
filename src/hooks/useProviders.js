@@ -3,20 +3,23 @@ import { supabase } from '../lib/supabase';
 
 /**
  * Hook to fetch, create, update, and search providers.
+ * @param {string} userId — the authenticated user's ID (providers belong to users, not homes)
  * Returns { providers, loading, error, refresh, addProvider, updateProvider, findOrCreateProvider }
  */
-export function useProviders() {
+export function useProviders(userId) {
   const [providers, setProviders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const fetchProviders = useCallback(async () => {
+    if (!userId) return;
     setLoading(true);
     setError(null);
     try {
       const { data, error: fetchError } = await supabase
         .from('providers')
         .select('*')
+        .eq('user_id', userId)
         .order('name', { ascending: true });
 
       if (fetchError) throw fetchError;
@@ -27,7 +30,7 @@ export function useProviders() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     fetchProviders();
@@ -37,7 +40,7 @@ export function useProviders() {
     try {
       const { data, error: insertError } = await supabase
         .from('providers')
-        .insert(provider)
+        .insert({ ...provider, user_id: userId })
         .select();
 
       if (insertError) throw insertError;
@@ -67,20 +70,16 @@ export function useProviders() {
 
   /**
    * Find existing provider by name, or auto-create one.
-   * Used when logging a service with a provider name.
    */
   const findOrCreateProvider = async (name, trade) => {
     if (!name || !name.trim()) return null;
 
     const trimmedName = name.trim();
-
-    // Check if provider already exists
     const existing = providers.find(
       (p) => p.name.toLowerCase() === trimmedName.toLowerCase()
     );
     if (existing) return existing.id;
 
-    // Auto-create new provider
     const result = await addProvider({
       name: trimmedName,
       trade: trade || 'General',
@@ -90,12 +89,8 @@ export function useProviders() {
   };
 
   return {
-    providers,
-    loading,
-    error,
+    providers, loading, error,
     refresh: fetchProviders,
-    addProvider,
-    updateProvider,
-    findOrCreateProvider,
+    addProvider, updateProvider, findOrCreateProvider,
   };
 }

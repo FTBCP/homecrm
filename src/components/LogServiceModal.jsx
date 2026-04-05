@@ -74,12 +74,12 @@ export default function LogServiceModal({ onClose, onSave, providers, prefill })
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center modal-overlay animate-overlay"
       style={{ backgroundColor: 'rgba(0,0,0,0.4)' }}
     >
       <div
         className="w-full max-w-[480px] max-h-[90vh] overflow-y-auto
-          rounded-t-[20px] sm:rounded-[20px] p-lg"
+          rounded-t-[20px] sm:rounded-[20px] p-lg animate-slide-up"
         style={{ backgroundColor: 'var(--color-surface)' }}
       >
         {/* Header */}

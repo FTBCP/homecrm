@@ -1,24 +1,25 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
-import { DEV_HOME_ID } from '../lib/constants';
 
 /**
  * Hook to fetch, create, and manage service records.
+ * @param {string} homeId — the authenticated user's home ID
  * Returns { records, loading, error, refresh, addRecord }
  */
-export function useServiceRecords() {
+export function useServiceRecords(homeId) {
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const fetchRecords = useCallback(async () => {
+    if (!homeId) return;
     setLoading(true);
     setError(null);
     try {
       const { data, error: fetchError } = await supabase
         .from('service_records')
         .select('*, providers(name, company)')
-        .eq('home_id', DEV_HOME_ID)
+        .eq('home_id', homeId)
         .order('date', { ascending: false });
 
       if (fetchError) throw fetchError;
@@ -29,7 +30,7 @@ export function useServiceRecords() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [homeId]);
 
   useEffect(() => {
     fetchRecords();
@@ -39,11 +40,10 @@ export function useServiceRecords() {
     try {
       const { data, error: insertError } = await supabase
         .from('service_records')
-        .insert({ ...record, home_id: DEV_HOME_ID })
+        .insert({ ...record, home_id: homeId })
         .select('*, providers(name, company)');
 
       if (insertError) throw insertError;
-      // Refresh the full list to get correct ordering
       await fetchRecords();
       return { success: true };
     } catch (err) {

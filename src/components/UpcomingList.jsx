@@ -44,7 +44,7 @@ export default function UpcomingList({ records, loading, error, onMarkDone }) {
   today.setHours(0, 0, 0, 0);
 
   return (
-    <div className="flex flex-col gap-sm">
+    <div className="flex flex-col gap-sm animate-stagger">
       {upcoming.map((record) => {
         const dueDate = new Date(record.next_recommended_date);
         dueDate.setHours(0, 0, 0, 0);

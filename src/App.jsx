@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { useAuth } from './hooks/useAuth';
 import { useServiceRecords, useServiceStats } from './hooks/useServiceRecords';
 import { useProviders } from './hooks/useProviders';
+import AuthPage from './components/AuthPage';
 import StatCard from './components/StatCard';
 import ServiceHistory from './components/ServiceHistory';
 import ProviderList from './components/ProviderList';
@@ -11,39 +13,58 @@ import EditProviderModal from './components/EditProviderModal';
 const TABS = ['History', 'Upcoming', 'Providers'];
 
 function App() {
+  const auth = useAuth();
+
+  // Show loading while checking session
+  if (auth.loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div
+          className="w-8 h-8 rounded-full border-2 border-t-transparent animate-spin"
+          style={{ borderColor: 'var(--color-border)', borderTopColor: 'transparent' }}
+        />
+      </div>
+    );
+  }
+
+  // Not logged in → show auth page
+  if (!auth.user) {
+    return <AuthPage onAuth={auth} />;
+  }
+
+  // Logged in → show main app
+  return <MainApp auth={auth} />;
+}
+
+function MainApp({ auth }) {
   const [activeTab, setActiveTab] = useState('History');
   const [showLogModal, setShowLogModal] = useState(false);
   const [editingProvider, setEditingProvider] = useState(null);
   const [prefillData, setPrefillData] = useState(null);
 
-  // Data hooks
-  const { records, loading, error, refresh, addRecord } = useServiceRecords();
+  // Data hooks — homeId for service records, userId for providers
+  const { records, loading, error, refresh, addRecord } = useServiceRecords(auth.homeId);
   const {
     providers, loading: providersLoading, error: providersError,
     refresh: refreshProviders, findOrCreateProvider, updateProvider,
-  } = useProviders();
+  } = useProviders(auth.user.id);
   const { spentThisYear, totalCount } = useServiceStats(records);
 
-  // Count upcoming/overdue items for the stat card
+  // Count upcoming/overdue items
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const actionItems = records.filter((r) => {
     if (!r.next_recommended_date) return false;
     const due = new Date(r.next_recommended_date);
     due.setHours(0, 0, 0, 0);
-    const daysUntil = Math.ceil((due - today) / (1000 * 60 * 60 * 24));
-    return daysUntil <= 30;
+    return Math.ceil((due - today) / (1000 * 60 * 60 * 24)) <= 30;
   }).length;
 
-  // Format spending as currency
   const formattedSpent = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
+    style: 'currency', currency: 'USD',
+    minimumFractionDigits: 0, maximumFractionDigits: 0,
   }).format(spentThisYear);
 
-  // Handle saving a new service record
   const handleSaveService = async (formData) => {
     let providerId = null;
     if (formData.providerName) {
@@ -60,14 +81,10 @@ function App() {
       next_recommended_date: formData.next_recommended_date,
     });
 
-    if (result.success) {
-      refreshProviders();
-    }
-
+    if (result.success) refreshProviders();
     return result;
   };
 
-  // Handle "Log Again" from Upcoming tab — pre-fill the form
   const handleLogAgain = (record) => {
     setPrefillData({
       category: record.category,
@@ -77,105 +94,92 @@ function App() {
     setShowLogModal(true);
   };
 
-  // Handle saving provider edits
   const handleSaveProvider = async (id, updates) => {
-    const result = await updateProvider(id, updates);
-    return result;
+    return await updateProvider(id, updates);
   };
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="px-md pt-xl pb-md">
-        <h1
-          className="font-display text-[28px] font-bold tracking-[-0.02em]"
-          style={{ color: 'var(--color-primary)' }}
-        >
-          HomeBase
-        </h1>
-        <p
-          className="text-sm mt-xs"
-          style={{ color: 'var(--color-muted)' }}
-        >
-          Your home&apos;s command center
-        </p>
-      </header>
-
-      {/* Stat Cards */}
-      <section className="px-md flex gap-sm overflow-x-auto pb-sm">
-        <StatCard label="Spent This Year" value={formattedSpent} />
-        <StatCard label="Services Logged" value={totalCount.toString()} />
-        <StatCard
-          label="Action Items"
-          value={actionItems.toString()}
-          highlight={actionItems > 0}
-        />
-      </section>
-
-      {/* Tab Bar */}
-      <nav className="px-md mt-md">
-        <div
-          className="flex rounded-full p-[3px]"
-          style={{ backgroundColor: 'var(--color-border)' }}
-        >
-          {TABS.map((tab) => (
-            <button
-              key={tab}
-              id={`tab-${tab.toLowerCase()}`}
-              onClick={() => setActiveTab(tab)}
-              className={`
-                flex-1 py-[10px] text-sm font-semibold rounded-full
-                transition-all duration-200 cursor-pointer
-              `}
-              style={{
-                backgroundColor: activeTab === tab ? 'var(--color-primary)' : 'transparent',
-                color: activeTab === tab ? '#FFFFFF' : 'var(--color-muted)',
-              }}
+      <div className="app-container">
+        {/* Header */}
+        <header className="px-md pt-xl pb-md animate-fade-in flex items-start justify-between">
+          <div>
+            <h1
+              className="font-display text-[28px] font-bold tracking-[-0.02em]"
+              style={{ color: 'var(--color-primary)' }}
             >
-              {tab}
-            </button>
-          ))}
-        </div>
-      </nav>
+              HomeBase
+            </h1>
+            <p className="text-sm mt-xs" style={{ color: 'var(--color-muted)' }}>
+              Your home&apos;s command center
+            </p>
+          </div>
+          <button
+            id="btn-sign-out"
+            onClick={auth.signOut}
+            className="mt-xs text-[12px] font-medium cursor-pointer px-sm py-[6px] rounded-[8px]
+              transition-colors duration-200"
+            style={{ color: 'var(--color-muted)' }}
+          >
+            Sign Out
+          </button>
+        </header>
 
-      {/* Tab Content */}
-      <main className="px-md pt-lg pb-xl">
-        {activeTab === 'History' && (
-          <ServiceHistory records={records} loading={loading} error={error} />
-        )}
-        {activeTab === 'Upcoming' && (
-          <UpcomingList
-            records={records}
-            loading={loading}
-            error={error}
-            onMarkDone={handleLogAgain}
-          />
-        )}
-        {activeTab === 'Providers' && (
-          <ProviderList
-            providers={providers}
-            loading={providersLoading}
-            error={providersError}
-            serviceRecords={records}
-            onEdit={(provider) => setEditingProvider(provider)}
-          />
-        )}
-      </main>
+        {/* Stat Cards */}
+        <section className="px-md flex gap-sm overflow-x-auto pb-sm hide-scrollbar">
+          <StatCard label="Spent This Year" value={formattedSpent} />
+          <StatCard label="Services Logged" value={totalCount.toString()} />
+          <StatCard label="Action Items" value={actionItems.toString()} highlight={actionItems > 0} />
+        </section>
 
-      {/* Floating Action Button */}
+        {/* Tab Bar */}
+        <nav className="px-md mt-md">
+          <div className="flex rounded-full p-[3px]" style={{ backgroundColor: 'var(--color-border)' }}>
+            {TABS.map((tab) => (
+              <button
+                key={tab}
+                id={`tab-${tab.toLowerCase()}`}
+                onClick={() => setActiveTab(tab)}
+                className="flex-1 py-[10px] text-sm font-semibold rounded-full
+                  transition-all duration-200 cursor-pointer"
+                style={{
+                  backgroundColor: activeTab === tab ? 'var(--color-primary)' : 'transparent',
+                  color: activeTab === tab ? '#FFFFFF' : 'var(--color-muted)',
+                }}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+        </nav>
+
+        {/* Tab Content */}
+        <main className="px-md pt-lg pb-[100px]" key={activeTab}>
+          <div className="animate-fade-in">
+            {activeTab === 'History' && (
+              <ServiceHistory records={records} loading={loading} error={error} />
+            )}
+            {activeTab === 'Upcoming' && (
+              <UpcomingList records={records} loading={loading} error={error} onMarkDone={handleLogAgain} />
+            )}
+            {activeTab === 'Providers' && (
+              <ProviderList
+                providers={providers} loading={providersLoading} error={providersError}
+                serviceRecords={records} onEdit={(p) => setEditingProvider(p)}
+              />
+            )}
+          </div>
+        </main>
+      </div>
+
+      {/* FAB */}
       <button
         id="btn-log-service"
-        onClick={() => {
-          setPrefillData(null);
-          setShowLogModal(true);
-        }}
+        onClick={() => { setPrefillData(null); setShowLogModal(true); }}
         className="fixed bottom-xl right-md w-[56px] h-[56px] rounded-full
           flex items-center justify-center text-2xl font-bold
-          shadow-lg hover:shadow-xl transition-shadow duration-200 cursor-pointer"
-        style={{
-          backgroundColor: 'var(--color-primary)',
-          color: '#FFFFFF',
-        }}
+          shadow-lg hover:shadow-xl transition-all duration-200 cursor-pointer btn-fab"
+        style={{ backgroundColor: 'var(--color-primary)', color: '#FFFFFF' }}
         aria-label="Log a service"
       >
         +
@@ -185,9 +189,7 @@ function App() {
       {showLogModal && (
         <LogServiceModal
           onClose={() => { setShowLogModal(false); setPrefillData(null); }}
-          onSave={handleSaveService}
-          providers={providers}
-          prefill={prefillData}
+          onSave={handleSaveService} providers={providers} prefill={prefillData}
         />
       )}
       {editingProvider && (

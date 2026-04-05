@@ -35,7 +35,7 @@ export default function ServiceHistory({ records, loading, error }) {
   }
 
   return (
-    <div className="flex flex-col gap-sm">
+    <div className="flex flex-col gap-sm animate-stagger">
       {records.map((record) => (
         <ServiceRow key={record.id} record={record} />
       ))}

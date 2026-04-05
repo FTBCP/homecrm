@@ -68,7 +68,7 @@ export default function ProviderList({ providers, loading, error, onEdit, servic
       </div>
 
       {/* Provider Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-sm">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-sm animate-stagger">
         {filtered.map((provider) => (
           <ProviderCard
             key={provider.id}

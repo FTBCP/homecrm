@@ -7,9 +7,10 @@
 ## Project Status
 
 **Phase:** 1 (MVP)
-**State:** Section 0 complete, Section 1 (Service History) complete — app is functional
+**State:** Sections 0–3 complete — all 3 tabs functional, committed to main
 **Deployed:** No (local only at http://localhost:5173/)
 **Database:** Supabase project created, 3 tables live, RLS temporarily disabled for dev
+**Last Commit:** `1f86e59` — feat(mvp): add service history, provider rolodex, and upcoming tabs
 
 What exists today:
 
@@ -19,19 +20,19 @@ What exists today:
 - [x] .env with Supabase URL and anon key
 - [x] React app initialized (Vite + React 19)
 - [x] Tailwind CSS v4 configured with brand tokens
-- [x] Vitest + React Testing Library installed (4 tests passing)
+- [x] Vitest + React Testing Library installed (6 tests passing)
 - [x] Supabase project created (project ref: bhgtyilutzgpptneuzbz)
 - [x] Database tables created (homes, service_records, providers)
 - [x] Supabase JS client wired up (src/lib/supabase.js)
 - [x] App shell with tab navigation (History / Upcoming / Providers)
 - [x] Log Service modal — fully working, saves to Supabase
 - [x] Service History list — displays records from Supabase
-- [x] Stat cards — Spent This Year and Services Logged are live
+- [x] Stat cards — Spent This Year, Services Logged, Action Items (live)
 - [x] Category badges with brand colors
 - [x] Provider auto-creation when logging a service
 - [x] Intervals config (src/lib/intervals.js)
-- [ ] Provider Rolodex tab (Section 2)
-- [ ] Upcoming/Recommendations tab (Section 3)
+- [x] Provider Rolodex tab — searchable grid, edit modal, star ratings, job counts
+- [x] Upcoming tab — sorted by urgency, overdue/due-soon badges, Log Again flow
 - [ ] Auth (email/password login)
 - [ ] Deployed to Vercel
 
@@ -84,9 +85,9 @@ What exists today:
 
 The immediate next steps, in order:
 
-1. **Build Provider Rolodex tab (Section 2)** — provider cards grid, add/edit forms, search/filter, job count per provider
-2. **Build Upcoming tab (Section 3)** — recommendation logic, urgency badges, mark-as-done flow
-3. **Polish & Ship (Section 4)** — mobile layout pass, empty states, loading/error states, auth, deploy
+1. **Polish & Ship (Section 4)** — mobile layout pass, loading/error polish, auth (Supabase Auth), deploy to Vercel
+2. **Re-enable RLS** — restore FK constraints, NOT NULL on user_id, create proper auth-based policies
+3. **Update brand.md** — remove shadcn/ui references, document actual component patterns
 
 ## Gotchas
 
