@@ -8,7 +8,7 @@
 
 **Phase:** 1 (MVP)
 **State:** Sections 0–4 complete — all 3 tabs, auth, RLS — committed to main
-**Deployed:** No (local only at http://localhost:5173/)
+**Deployed:** Yes (https://homecrm.vercel.app/)
 **Database:** Supabase project created, 3 tables live, RLS enabled with auth-based policies
 **Last Commit:** `a5f49cb` — feat(auth): add Supabase email/password auth with RLS policies
 
@@ -38,7 +38,7 @@ What exists today:
 - [x] Auto-create home on first signup
 - [x] Sign Out button in header
 - [x] CSS polish: animations, stagger, modal blur, centered container
-- [ ] Deployed (considering Railway vs Vercel)
+- [x] Deployed to Vercel (https://homecrm.vercel.app/)
 
 ## Last Session
 

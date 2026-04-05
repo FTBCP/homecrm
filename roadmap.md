@@ -62,7 +62,7 @@
 - [x] Re-enable RLS with proper auth-based policies
 - [x] CSS polish — animations (fade-in, slide-up, stagger), centered container, modal blur
 - [x] 6 tests passing (render, stats, tabs, auth mocking)
-- [ ] Deploy to production (Railway or Vercel), confirm everything works at live URL
+- [x] Deploy to production (Railway or Vercel), confirm everything works at live URL: https://homecrm.vercel.app/
 - [ ] Cleanup: remove DEV_HOME_ID constant, update brand.md
 
 ---
