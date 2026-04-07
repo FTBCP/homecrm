@@ -6,11 +6,11 @@
 
 ## Project Status
 
-**Phase:** 1 (MVP)
-**State:** Sections 0–4 complete — all 3 tabs, auth, RLS — committed to main
+**Phase:** 2 (Quality of Life)
+**State:** Phase 2 QoL features added (Interactive Dashboard, Spending Charts, Onboarding Wizard) — Version 1.0
 **Deployed:** Yes (https://homecrm.vercel.app/)
-**Database:** Supabase project created, 3 tables live, RLS enabled with auth-based policies
-**Last Commit:** `a5f49cb` — feat(auth): add Supabase email/password auth with RLS policies
+**Database:** Supabase project created, 3 tables live, RLS enabled
+**Last Commit:** `v1.0.0` — feat: version 1.0 - interactive dashboard, monthly charts, and bug fixes
 
 What exists today:
 
@@ -42,24 +42,23 @@ What exists today:
 
 ## Last Session
 
-**Date:** 2026-04-04
+**Date:** 2026-04-07
 
 **What happened:**
 
-- Added Supabase email/password auth (useAuth hook, AuthPage component)
-- Auth gate in App.jsx — shows login when logged out, main app when logged in
-- Auto-creates a `homes` row on first signup (no address required)
-- Switched hooks from DEV_HOME_ID to real homeId/userId from auth
-- Re-enabled RLS with proper auth-based policies on all 3 tables
-- Cleaned up old dev data (fake user_id rows)
-- Added CSS polish pass: fade-in, slide-up, stagger animations, centered container, modal blur
-- Added Sign Out button to header
-- All 6 tests passing (updated to mock Supabase auth)
-- Fixed race condition: `loadHome` wasn't awaited, causing `homeId = null` on page load
-- Fixed `homes` insert: removed non-existent `name` column from auto-create
-- Fixed loading guards in hooks: `setLoading(false)` when homeId/userId is null
-- Locked roadmap phases: Phase 1 (MVP), Phase 2 (QoL), Phase 3+ (big ideas)
-- Old test data deleted — users start fresh after auth migration
+- **Restored Interactive Stat Cards**: Stat cards on the dashboard are now clickable and navigate to relevant tabs (History or Providers).
+- **Added Provider Count Stat**: A new card on the dashboard showing the total count of active providers.
+- **Restored Spending Chart**: Re-integrated `recharts` to provide a visual 6-month monthly spending bar chart on the dashboard.
+- **Fixed Quick Log Cost Bug**: Corrected a bug where selecting a common task from the onboarding wizard would leave the cost blank in the modal.
+- **Phase 2 Progress**: Updated `roadmap.md` to show "Improved Dashboard", "Onboarding Wizard", and "Dashboard Charts" as complete.
+- **Version 1.0**: Tagged and committed the current functional state as the official Version 1.0 release.
+
+## Decisions Made
+
+| # | Decision | Reason | Date |
+|---|----------|--------|------|
+| 14 | Use `recharts` for spending | Better visual representation of monthly trends compared to static category bars. | 2026-04-07 |
+| 15 | Interactive Dashboard Tiles | Improves UX by allowing quick context-switching directly from the main view. | 2026-04-07 |
 
 ## Decisions Made
 

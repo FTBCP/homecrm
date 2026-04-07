@@ -13,7 +13,11 @@ export default function LogServiceModal({ onClose, onSave, providers, prefill, e
   const [form, setForm] = useState({
     category: editRecord?.category || prefill?.category || '',
     description: editRecord?.description || prefill?.description || '',
-    cost: editRecord?.cost !== undefined ? String(editRecord.cost) : (initialJobType === 'diy' ? '0' : ''),
+    cost: editRecord?.cost !== undefined 
+      ? String(editRecord.cost) 
+      : (prefill?.cost !== undefined 
+          ? String(prefill.cost) 
+          : (initialJobType === 'diy' ? '0' : '')),
     date: editRecord?.date || new Date().toISOString().split('T')[0],
     providerName: initialProviderName,
     notes: editRecord?.notes || '',

@@ -71,9 +71,9 @@
 
 > The user's requested refined set of Phase 2 features. Pick one using `/new-feature`.
 
-- [ ] Improved Dashboard (show upcoming tasks right away instead of having to switch tabs)
-- [ ] Intuitive Onboarding (wizard to pre-fill common maintenance tasks like air filters, winterizing, or add sample jobs)
-- [ ] Dashboard charts (spending by category over time)
+- [x] Improved Dashboard (clickable stat cards for quick navigation)
+- [x] Intuitive Onboarding (Quick Log templates / wizard)
+- [x] Dashboard charts (monthly spending visualization)
 - [ ] Provider notes and review history (track past experiences)
 - [ ] Social login (Google, Apple)
 

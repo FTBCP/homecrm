@@ -141,13 +141,6 @@ function MainApp({ auth }) {
           </button>
         </header>
 
-        {/* Stat Cards */}
-        <section className="px-md flex gap-sm overflow-x-auto pb-sm hide-scrollbar">
-          <StatCard label="Spent This Year" value={formattedSpent} />
-          <StatCard label="Services Logged" value={totalCount.toString()} />
-          <StatCard label="Action Items" value={actionItems.toString()} highlight={actionItems > 0} />
-        </section>
-
         {/* Tab Bar */}
         <nav className="px-md mt-md">
           <div className="flex rounded-full p-[3px]" style={{ backgroundColor: 'var(--color-border)' }}>
@@ -175,7 +168,12 @@ function MainApp({ auth }) {
             {activeTab === 'Dashboard' && (
               <Dashboard 
                 records={records} loading={loading} error={error} 
-                onMarkDone={handleLogAgain} onLogSample={handleLogSample} 
+                onMarkDone={handleLogAgain} onLogSample={handleLogSample}
+                setActiveTab={setActiveTab}
+                formattedSpent={formattedSpent}
+                totalCount={totalCount}
+                actionItems={actionItems}
+                providerCount={providers.length}
               />
             )}
             {activeTab === 'History' && (

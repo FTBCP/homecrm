@@ -1,8 +1,12 @@
 import UpcomingList from './UpcomingList';
 import SpendingChart from './SpendingChart';
 import OnboardingWizard from './OnboardingWizard';
+import StatCard from './StatCard';
 
-export default function Dashboard({ records, loading, error, onMarkDone, onLogSample }) {
+export default function Dashboard({ 
+  records, loading, error, onMarkDone, onLogSample,
+  setActiveTab, formattedSpent, totalCount, actionItems, providerCount
+}) {
   if (loading) {
     return (
       <div className="text-center py-xl">
@@ -24,6 +28,30 @@ export default function Dashboard({ records, loading, error, onMarkDone, onLogSa
 
   return (
     <div className="space-y-xl animate-fade-in">
+      <section className="flex gap-sm overflow-x-auto pb-sm hide-scrollbar -mx-md px-md sm:mx-0 sm:px-0">
+        <StatCard 
+          label="Spent This Year" 
+          value={formattedSpent} 
+          onClick={() => setActiveTab('History')}
+        />
+        <StatCard 
+          label="Services Logged" 
+          value={totalCount.toString()} 
+          onClick={() => setActiveTab('History')}
+        />
+        <StatCard 
+          label="Action Items" 
+          value={actionItems.toString()} 
+          highlight={actionItems > 0} 
+          onClick={() => setActiveTab('Dashboard')}
+        />
+        <StatCard 
+          label="Providers" 
+          value={providerCount.toString()} 
+          onClick={() => setActiveTab('Providers')}
+        />
+      </section>
+
       <OnboardingWizard onLogSample={onLogSample} defaultMinimized={records.length > 0} />
       
       {records.length > 0 && (
